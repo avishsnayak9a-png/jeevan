@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rural Telehealth & Doctor Finder</title>
+  <style>
+    /* ---------- Global Styles ---------- */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1530, #0d1b4c);
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+
+    header h1 {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    header h3 {
+      font-weight: 400;
+      color: #b0c4de;
+      margin-bottom: 20px;
+    }
+
+    .tab-group {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 30px;
+    }
+
+    .tab-group button {
+      background-color: #1e3a8a;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px 6px 0 0;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      opacity: 0.7;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-group button.active {
+      background-color: #0d1b4c;
+      opacity: 1;
+      border-bottom: 3px solid #38a169;
+    }
+
+    .tab-group button:hover:not(.active) {
+      background-color: #2d4bb3;
+    }
+
+    .content-box {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 0 12px 12px 12px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 0 auto 30px;
+      padding: 30px 40px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .content-box h2 {
+      color: #e0e6ff;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    /* ---------- Doctor Finder Section ---------- */
+    .filter-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-section select, .filter-section input, .filter-section button, .booking-form-content input[type="date"], .booking-form-content input[type="time"] {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #4a69bd;
+      background: #1e3a8a;
+      color: #fff;
+      min-width: 150px;
+      cursor: pointer;
+    }
+    
+    .filter-section input::placeholder {
+        color: #b0c4de;
+    }
+
+    .filter-section button {
+      background-color: #38a169;
+    }
+
+    .filter-section button:hover {
+      background-color: #278550;
+    }
+    
+    /* Doctor Card Styling */
+    .doctor-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-left: 5px solid #4a69bd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doctor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+      padding-bottom: 5px;
+    }
+    
+    .doctor-header h4 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.3em;
+    }
+    
+    .doctor-card p {
+      margin: 0;
+      color: #cfd8e3;
+    }
+    
+    .rating {
+        color: gold;
+        font-size: 1.1em;
+    }
+
+    .doctor-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .book-btn {
+        background-color: #f39c12; /* Orange for booking */
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .book-btn:hover {
+        background-color: #e67e22;
+    }
+
+
+    /* ---------- Symptom Checker Section (Existing styles) ---------- */
+    .checker-form {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .checker-form label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #e0e6ff;
+    }
+
+    .checker-form select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #4a69bd;
+        background: #1e3a8a;
+        color: #fff;
+    }
+
+    .checker-form button {
+        width: 100%;
+        margin-top: 30px;
+        background-color: #e67e22;
+        padding: 15px;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    .checker-form button:hover {
+        background-color: #d35400;
+    }
+    
+    #riskResult {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
+        display: none;
+    }
+
+    .risk-low { background-color: #2ecc71; color: #0a1530; }
+    .risk-medium { background-color: #f1c40f; color: #0a1530; }
+    .risk-high { background-color: #e74c3c; color: white; }
+    
+    .result-guide {
+        margin-top: 15px;
+        font-weight: normal;
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+    
+    /* ---------- Modal/Popup Styles for Booking ---------- */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none; /* Hidden by default */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #0d1b4c;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+
+    .modal-content h3 {
+        color: #38a169;
+        margin-top: 0;
+        border-bottom: 1px solid #38a169;
+        padding-bottom: 10px;
+    }
+
+    .booking-form-content label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .booking-form-content input[type="text"], 
+    .booking-form-content input[type="date"], 
+    .booking-form-content input[type="time"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+    }
+
+    .modal-footer button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    #submitBooking {
+        background-color: #38a169;
+        color: white;
+    }
+
+    #closeModal {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .content-box { padding: 25px; }
+      .filter-section { flex-direction: column; }
+      .filter-section select, .filter-section input, .filter-section button { min-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Jan Seva Telehealth Portal 🇮🇳</h1>
+    <h3>Your Guide to Finding Local Doctors and Checking Symptoms</h3>
+  </header>
+
+  <div class="tab-group">
+    <button id="tab-finder" class="active" onclick="showTab('finder')">👨‍⚕️ Doctor Finder</button>
+    <button id="tab-checker" onclick="showTab('checker')">❤️ Symptom Checker</button>
+  </div>
+
+  <div class="content-box">
+    
+    <div id="finder-section">
+        <h2>Find a Nearby Doctor</h2>
+        <p style="text-align: center; margin-bottom: 20px; color: #b0c4de;">Search, filter, and connect with healthcare providers in your vicinity.</p>
+
+        <div class="filter-section">
+            <input type="text" id="searchName" placeholder="Search by Name/Specialization">
+            
+            <input type="number" id="radius" placeholder="Max Distance (km)" min="1" max="50">
+
+            <select id="ratingFilter">
+                <option value="0">All Ratings</option>
+                <option value="4">⭐ 4+ Rating</option>
+                <option value="3">⭐ 3+ Rating</option>
+            </select>
+            
+            <select id="typeFilter">
+                <option value="all">Govt/Private (All)</option>
+                <option value="govt">🏥 Government Clinic</option>
+                <option value="private">🏨 Private Practice</option>
+            </select>
+            
+            <button onclick="filterDoctors()">🔎 Apply Filters</button>
+        </div>
+
+        <div class="doctor-list" id="doctorList">
+            <div class="doctor-card" data-distance="5" data-rating="4.5" data-type="govt" data-specialization="General Physician" data-name="Meena Rao">
+                <div class="doctor-header">
+                    <h4>Dr. Meena Rao, MBBS, MD</h4>
+                    <span class="rating">⭐⭐⭐⭐⭐ (4.5)</span>
+                </div>
+                <p><b>Specialization:</b> General Physician</p>
+                <p><b>Type:</b> 🏥 Government Clinic</p>
+                <p><b>Contact:</b> +91 9876543210</p>
+                <p><b>Location:</b> Primary Health Center, Khetwadi (5 km away)</p>
+                <div class="doctor-card-footer">
+                    <button class="book-btn" onclick="openBookingModal('Dr. Meena Rao')">🗓️ Book Appointment</button>
+                </div>
+            </div>
+            
+            <div class="doctor-card" data-distance="10" data-rating="3.2" data-type="private" data-specialization="Pediatrician" data-name="Arun Patil">
+                <div class="doctor-header">
+                    <h4>Dr. Arun Patil, DCH</h4>
+                    <span class="rating">⭐⭐⭐ (3.2)</span>
+                </div>
+                <p><b>Specialization:</b> Pediatrician</p>
+                <p><b>Type:</b> 🏨 Private Practice</p>
+                <p><b>Contact:</b> +91 9823456789</p>
+                <p><b>Location:</b> Rural Hospital, Sangamner (10 km away)</p>
+                <div class="doctor-card-footer">
+                    <button class="book-btn" onclick="openBookingModal('Dr. Arun Patil')">🗓️ Book Appointment</button>
+                </div>
+            </div>
+            
+            <div class="doctor-card" data-distance="15" data-rating="2.8" data-type="govt" data-specialization="Gynecologist" data-name="Sneha Iyer">
+                <div class="doctor-header">
+                    <h4>Dr. Sneha Iyer, MS</h4>
+                    <span class="rating">⭐⭐⭐ (2.8)</span>
+                </div>
+                <p><b>Specialization:</b> Gynecologist</p>
+                <p><b>Type:</b> 🏥 Government Clinic</p>
+                <p><b>Contact:</b> +91 9753124680</p>
+                <p><b>Location:</b> Sub-District Hospital, Rahuri (15 km away)</p>
+                <div class="doctor-card-footer">
+                    <button class="book-btn" onclick="openBookingModal('Dr. Sneha Iyer')">🗓️ Book Appointment</button>
+                </div>
+            </div>
+            
+             <div class="doctor-card" data-distance="25" data-rating="4.8" data-type="private" data-specialization="Cardiologist" data-name="Ramesh Kulkarni">
+                <div class="doctor-header">
+                    <h4>Dr. Ramesh Kulkarni, DM</h4>
+                    <span class="rating">⭐⭐⭐⭐⭐ (4.8)</span>
+                </div>
+                <p><b>Specialization:</b> Cardiologist</p>
+                <p><b>Type:</b> 🏨 Private Practice</p>
+                <p><b>Contact:</b> +91 9012345678</p>
+                <p><b>Location:</b> Civil Hospital, Ahmednagar (25 km away)</p>
+                <div class="doctor-card-footer">
+                    <button class="book-btn" onclick="openBookingModal('Dr. Ramesh Kulkarni')">🗓️ Book Appointment</button>
+                </div>
+            </div>
+            
+            <p id="noResults" style="text-align: center; color: #e74c3c; font-weight: bold; margin-top: 20px; display: none;">No doctors found matching your filters. Try widening your search.</p>
+        </div>
+    </div>
+
+    <div id="checker-section" style="display:none;">
+        <h2>Self-Assessment Symptom Checker</h2>
+        <p style="text-align: center; margin-bottom: 20px; color: #b0c4de;">Answer simple questions to get a preliminary risk assessment.</p>
+        
+        <div class="checker-form">
+            <label for="fever">1. Do you have a **high fever** (above 102°F / 38.9°C)?</label>
+            <select id="fever">
+                <option value="0">No Fever / Mild Fever</option>
+                <option value="1">High Fever (2-3 days)</option>
+                <option value="2">Severe, persistent high fever (4+ days)</option>
+            </select>
+            
+            <label for="breathing">2. Are you experiencing **difficulty breathing** or severe chest pain?</label>
+            <select id="breathing">
+                <option value="0">No / Mild cough</option>
+                <option value="3">Moderate shortness of breath</option>
+                <option value="5">Severe difficulty breathing / Can't speak</option>
+            </select>
+            
+            <label for="pain">3. Do you have **severe, sudden pain** (head, abdomen, etc.)?</label>
+            <select id="pain">
+                <option value="0">No / Mild, manageable pain</option>
+                <option value="2">Moderate pain requiring rest</option>
+                <option value="4">Worst pain of your life / Unbearable</option>
+            </select>
+            
+            <label for="vitals">4. Are you experiencing **fainting, confusion**, or severe bleeding?</label>
+            <select id="vitals">
+                <option value="0">No, I feel alert</option>
+                <option value="4">Feeling lightheaded or confused</option>
+                <option value="7">Fainting / Uncontrolled bleeding</option>
+            </select>
+
+            <button onclick="calculateRisk()">Check My Risk Level</button>
+            
+            <div id="riskResult">
+                </div>
+        </div>
+    </div>
+    
+  </div> <div id="bookingModal" class="modal">
+      <div class="modal-content">
+          <h3 id="modalDoctorName">Book Appointment with Doctor</h3>
+          <form class="booking-form-content" onsubmit="submitBooking(event)">
+              <input type="hidden" id="bookingDoctor" name="doctorName">
+
+              <label for="patientName">Your Full Name</label>
+              <input type="text" id="patientName" name="patientName" required placeholder="E.g., Ram Singh">
+
+              <label for="appointmentDate">Preferred Date</label>
+              <input type="date" id="appointmentDate" name="appointmentDate" required>
+
+              <label for="appointmentTime">Preferred Time</label>
+              <input type="time" id="appointmentTime" name="appointmentTime" required>
+
+              <label for="reason">Reason for Visit (Brief)</label>
+              <input type="text" id="reason" name="reason" required placeholder="E.g., Persistent cough and fever">
+
+              <div class="modal-footer">
+                  <button type="button" id="closeModal" onclick="closeBookingModal()">Cancel</button>
+                  <button type="submit" id="submitBooking">Confirm Booking</button>
+              </div>
+          </form>
+      </div>
+  </div>
+
+
+  <footer>
+    © 2025 Jan Seva Telehealth Portal. Empowering Rural Health.
+  </footer>
+
+  <script>
+    // Initial setup: Show the correct tab on load
+    document.addEventListener('DOMContentLoaded', () => {
+        showTab('finder');
+        filterDoctors(); // Show all doctors initially
+    });
+
+    // --- TAB SWITCHING ---
+    function showTab(tabId) {
+      document.getElementById('finder-section').style.display = 'none';
+      document.getElementById('checker-section').style.display = 'none';
+      
+      document.getElementById('tab-finder').classList.remove('active');
+      document.getElementById('tab-checker').classList.remove('active');
+
+      document.getElementById(tabId + '-section').style.display = 'block';
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // --- DOCTOR FILTERING ---
+    function filterDoctors() {
+      const searchName = document.getElementById('searchName').value.toLowerCase();
+      const radius = parseInt(document.getElementById('radius').value) || Infinity;
+      const minRating = parseFloat(document.getElementById('ratingFilter').value);
+      const docType = document.getElementById('typeFilter').value;
+      
+      const doctorCards = document.querySelectorAll('.doctor-card');
+      let resultsFound = false;
+
+      doctorCards.forEach(card => {
+        const distance = parseInt(card.getAttribute('data-distance'));
+        const rating = parseFloat(card.getAttribute('data-rating'));
+        const type = card.getAttribute('data-type');
+        const specialization = card.getAttribute('data-specialization').toLowerCase();
+        const name = card.getAttribute('data-name').toLowerCase();
+
+        // 1. Distance Filter
+        const passesDistance = distance <= radius;
+
+        // 2. Rating Filter
+        const passesRating = rating >= minRating;
+
+        // 3. Type Filter
+        const passesType = (docType === 'all' || type === docType);
+        
+        // 4. Search Filter (by name or specialization)
+        const passesSearch = !searchName || name.includes(searchName) || specialization.includes(searchName);
+
+        const isVisible = passesDistance && passesRating && passesType && passesSearch;
+
+        card.style.display = isVisible ? 'flex' : 'none';
+        
+        if (isVisible) {
+            resultsFound = true;
+        }
+      });
+      
+      document.getElementById('noResults').style.display = resultsFound ? 'none' : 'block';
+    }
+
+    // --- SYMPTOM CHECKER LOGIC ---
+    function calculateRisk() {
+        const fever = parseInt(document.getElementById('fever').value);
+        const breathing = parseInt(document.getElementById('breathing').value);
+        const pain = parseInt(document.getElementById('pain').value);
+        const vitals = parseInt(document.getElementById('vitals').value);
+
+        const totalRiskScore = fever + breathing + pain + vitals;
+        const resultDiv = document.getElementById('riskResult');
+        let riskLevel = "";
+        let guideText = "";
+        let className = "";
+
+        if (totalRiskScore >= 12) {
+            riskLevel = "🔴 HIGH Risk";
+            className = "risk-high";
+            guideText = "🔴 **IMMEDIATE EMERGENCY.** Call your local emergency number (e.g., 108 or 102) or rush to the nearest hospital. Do not wait for a consultation.";
+        } else if (totalRiskScore >= 6) {
+            riskLevel = "🟡 MEDIUM Risk";
+            className = "risk-medium";
+            guideText = "🟡 **URGENT CONSULTATION.** You should consult with a doctor (General Physician or Specialist) immediately. Use the Doctor Finder tab or visit a clinic soon.";
+        } else {
+            riskLevel = "🟢 LOW Risk";
+            className = "risk-low";
+            guideText = "🟢 **ROUTINE CARE.** Your symptoms suggest a minor condition. You can manage at home with rest and basic medication. If symptoms worsen, use the Doctor Finder tab.";
+        }
+
+        resultDiv.className = ''; // Clear previous classes
+        resultDiv.classList.add(className);
+        resultDiv.innerHTML = `<h3>${riskLevel}</h3><div class="result-guide">${guideText}</div>`;
+        resultDiv.style.display = 'block';
+        
+        alert(`Risk Assessment Complete: ${riskLevel}\n\nNext Step: ${guideText.replace(/\*\*/g, '')}`);
+    }
+    
+    // --- APPOINTMENT BOOKING LOGIC ---
+    function openBookingModal(doctorName) {
+        document.getElementById('modalDoctorName').textContent = `Book Appointment with ${doctorName}`;
+        document.getElementById('bookingDoctor').value = doctorName;
+        document.getElementById('bookingModal').style.display = 'flex';
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('appointmentDate').setAttribute('min', today);
+    }
+
+    function closeBookingModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+    }
+
+    function submitBooking(event) {
+        event.preventDefault(); // Stop the form from submitting normally
+        
+        const doctor = document.getElementById('bookingDoctor').value;
+        const patient = document.getElementById('patientName').value;
+        const date = document.getElementById('appointmentDate').value;
+        const time = document.getElementById('appointmentTime').value;
+        const reason = document.getElementById('reason').value;
+
+        // Simple confirmation message (In a real application, this data would be sent to a server)
+        alert(`✅ Appointment Confirmed!
+        
+        Doctor: ${doctor}
+        Patient: ${patient}
+        Date: ${date}
+        Time: ${time}
+        Reason: ${reason}
+        
+        Please visit the clinic location on time. You will receive a reminder SMS.`);
+
+        // Clear and close the form
+        document.getElementById('patientName').value = '';
+        document.getElementById('appointmentDate').value = '';
+        document.getElementById('appointmentTime').value = '';
+        document.getElementById('reason').value = '';
+        closeBookingModal();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Jeevandhara</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #0a1530, #0d1b4c);
+    color: #fff;
+    text-align: center;
+  }
+  header, footer {
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+  footer {
+    font-size: 13px;
+    color: #aaa;
+  }
+  .card {
+    margin: 60px auto;
+    width: 320px;
+    border: 2px dashed #4a69bd;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+  }
+  input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  button, .btn {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  button:hover, .btn:hover {
+    background: #2d4bb3;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><i class="fas fa-lock"></i> Jeevandhara Login</h1>
+</header>
+
+<div class="card">
+  <h3>Welcome to Jeevandhara</h3>
+  <input type="text" id="username" placeholder="Username or Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button><br><br>
+  <a href="Jeevandhara.html" class="btn">← Home</a>
+</div>
+
+<footer>© 2025 Jeevandhara</footer>
+
+<script>
+function login() {
+  let username = document.getElementById("username").value.trim();
+  let password = document.getElementById("password").value.trim();
+
+  if (username === "" || password === "") {
+    alert("⚠️ Please enter both username and password!");
+  } else {
+    // Create popup overlay
+    let popup = document.createElement("div");
+    popup.innerHTML = `
+      <div style="
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;
+      ">
+        <div style="
+          background:#fff;color:#000;padding:30px 40px;border-radius:12px;
+          text-align:center;font-size:18px;font-weight:500;
+        ">
+          ✅ Successfully Logged In!<br><br>
+          <button id='okBtn' style='background:#1e3a8a;color:white;padding:8px 20px;border:none;border-radius:8px;cursor:pointer;'>
+            OK
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById("okBtn").onclick = function() {
+      popup.remove();
+    };
+  }
+}
+</script>
+
+</body>
+</html>

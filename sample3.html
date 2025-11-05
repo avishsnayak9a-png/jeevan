@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Doctor Consultation</title>
+  <style>
+    /* ---------- Global Styles ---------- */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1530, #0d1b4c);
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+
+    header h1 {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    header h3 {
+      font-weight: 400;
+      color: #b0c4de;
+      margin-bottom: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .button-group button {
+      background-color: #1e3a8a;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .button-group button:hover {
+      background-color: #2d4bb3;
+    }
+
+    .content-box {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      width: 85%;
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 30px 40px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .content-box h2 {
+      color: #e0e6ff;
+      margin-bottom: 15px;
+    }
+
+    .content-box ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .content-box ul li {
+      margin-bottom: 10px;
+      color: #dcdcdc;
+    }
+
+    /* ---------- Video Consultation Section ---------- */
+    .video-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    video {
+      width: 70%;
+      border-radius: 12px;
+      border: 2px solid #1e3a8a;
+      background: #000;
+      margin-bottom: 15px;
+    }
+
+    .video-controls button {
+      margin: 8px;
+      background-color: #1e3a8a;
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .video-controls button:hover {
+      background-color: #2d4bb3;
+    }
+
+    /* ---------- Doctor List ---------- */
+    .doctor-list {
+      margin-top: 30px;
+    }
+
+    .doctor-card {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    /* New structure to hold name and button */
+    .doctor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px; /* Adjust spacing */
+    }
+
+    .doctor-header h4 {
+      margin: 0;
+      color: #fff;
+    }
+
+    .doctor-card p {
+      margin: 5px 0;
+      color: #cfd8e3;
+    }
+    
+    /* Style for the new Contact button */
+    .contact-btn {
+        background-color: #38a169; /* Green color for contact */
+        border: none;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .contact-btn:hover {
+        background-color: #278550;
+    }
+    
+    /* Style for the Start Chat/Audio buttons */
+    .start-consultation-btn {
+        background-color: #1e3a8a;
+        border: none;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .start-consultation-btn:hover {
+        background-color: #2d4bb3;
+    }
+
+
+    .filter-section {
+      text-align: center;
+      margin: 15px 0 30px 0;
+    }
+
+    .filter-section input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      width: 180px;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      video { width: 90%; }
+      .content-box { padding: 25px; }
+      .contact-btn { padding: 6px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Virtual Doctor Consultation</h1>
+    <h3>Select your consultation type</h3>
+  </header>
+
+  <div class="button-group">
+    <button onclick="showSection('video')">Video Consultation</button>
+    <button onclick="showSection('audio')">Audio Consultation</button>
+    <button onclick="showSection('chat')">Chat Consultation</button>
+  </div>
+
+  <div class="content-box" id="video-section">
+    <h2>Video Consultation</h2>
+    <p>Connect with certified doctors through secure video calls. Enable your camera and start your consultation.</p>
+
+    <div class="video-section">
+      <video id="videoFeed" autoplay playsinline></video>
+      <div class="video-controls">
+        <button onclick="startCamera()">📷 Camera On</button>
+        <button onclick="stopCamera()">🚫 Camera Off</button>
+        <button onclick="alert('Starting Video Consultation...')">🎥 Start VC Consultation</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <label for="radius">Search Doctors within (km): </label><br><br>
+      <input type="number" id="radius" placeholder="Enter radius" min="1" max="50">
+      <button onclick="filterDoctors()">Search</button>
+    </div>
+
+    <div class="doctor-list" id="doctorList">
+      <h3>Available Doctors</h3>
+      
+      <div class="doctor-card" data-distance="5">
+        <div class="doctor-header">
+            <h4>Dr. Meena Rao</h4>
+            <button class="contact-btn" onclick="alert('Initiating contact with Dr. Meena Rao (5 km)')">Contact</button>
+        </div>
+        <p><b>Specialization:</b> General Physician</p>
+        <p><b>Contact:</b> +91 9876543210</p>
+        <p><b>Address:</b> Primary Health Center, Khetwadi (5 km away)</p>
+      </div>
+      
+      <div class="doctor-card" data-distance="10">
+        <div class="doctor-header">
+            <h4>Dr. Arun Patil</h4>
+            <button class="contact-btn" onclick="alert('Initiating contact with Dr. Arun Patil (10 km)')">Contact</button>
+        </div>
+        <p><b>Specialization:</b> Pediatrician</p>
+        <p><b>Contact:</b> +91 9823456789</p>
+        <p><b>Address:</b> Rural Hospital, Sangamner (10 km away)</p>
+      </div>
+      
+      <div class="doctor-card" data-distance="15">
+        <div class="doctor-header">
+            <h4>Dr. Sneha Iyer</h4>
+            <button class="contact-btn" onclick="alert('Initiating contact with Dr. Sneha Iyer (15 km)')">Contact</button>
+        </div>
+        <p><b>Specialization:</b> Gynecologist</p>
+        <p><b>Contact:</b> +91 9753124680</p>
+        <p><b>Address:</b> Sub-District Hospital, Rahuri (15 km away)</p>
+      </div>
+      
+      <div class="doctor-card" data-distance="25">
+        <div class="doctor-header">
+            <h4>Dr. Ramesh Kulkarni</h4>
+            <button class="contact-btn" onclick="alert('Initiating contact with Dr. Ramesh Kulkarni (25 km)')">Contact</button>
+        </div>
+        <p><b>Specialization:</b> Cardiologist</p>
+        <p><b>Contact:</b> +91 9012345678</p>
+        <p><b>Address:</b> Civil Hospital, Ahmednagar (25 km away)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-box" id="audio-section" style="display:none;">
+    <h2>Audio Consultation</h2>
+    <p>Speak with doctors directly via secure audio call for quick medical advice.</p>
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="start-consultation-btn" onclick="alert('Starting Audio Consultation...')">📞 Start Audio Consultation</button>
+    </div>
+  </div>
+
+  <div class="content-box" id="chat-section" style="display:none;">
+    <h2>Chat Consultation</h2>
+    <p>Chat with healthcare professionals and share symptoms in real-time.</p>
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="start-consultation-btn" onclick="alert('Starting Chat Consultation...')">💬 Start Chat</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Rural Healthcare Solutions. All Rights Reserved.
+  </footer>
+
+  <script>
+    // Section Toggle
+    function showSection(type) {
+      document.getElementById('video-section').style.display = 'none';
+      document.getElementById('audio-section').style.display = 'none';
+      document.getElementById('chat-section').style.display = 'none';
+      document.getElementById(type + '-section').style.display = 'block';
+
+      // Stop camera if switching away from video
+      if (type !== 'video') {
+        stopCamera();
+      }
+    }
+
+    // Set initial view
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('video');
+    });
+
+    // Camera Controls
+    let stream;
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        document.getElementById('videoFeed').srcObject = stream;
+      } catch (err) {
+        alert('Camera access denied or not available. Error: ' + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        document.getElementById('videoFeed').srcObject = null;
+        stream = null;
+      }
+    }
+
+    // Doctor Filter
+    function filterDoctors() {
+      const radiusInput = document.getElementById('radius');
+      const radius = parseInt(radiusInput.value);
+      
+      const doctorCards = document.querySelectorAll('.doctor-card');
+      doctorCards.forEach(card => {
+        const distance = parseInt(card.getAttribute('data-distance'));
+        const isVisible = (!radius || distance <= radius);
+        card.style.display = isVisible ? 'block' : 'none';
+      });
+      
+      // Optional: Add feedback if no doctors are found (can be more sophisticated)
+      if (radius && document.querySelectorAll('.doctor-card[style*="block"]').length === 0) {
+        // console.log(`No doctors found within ${radius} km.`);
+      }
+    }
+  </script>
+
+</body>
+</html>
